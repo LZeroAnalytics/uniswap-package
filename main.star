@@ -1,4 +1,4 @@
-def run(plan, args):
+def run(plan, rpc_url):
     plan.add_service(
         name="uniswap-ui",
         config=ServiceConfig(
@@ -7,7 +7,7 @@ def run(plan, args):
                 "api": PortSpec(number=3000, transport_protocol="TCP", wait=None),
             },
             env_vars = {
-                "RPC_URL": args["RPC_URL"],
+                "RPC_URL": rpc_url,
             },
         )
     )
