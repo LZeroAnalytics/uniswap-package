@@ -25,7 +25,7 @@ def run(plan, rpc_url, backend_url):
     plan.add_service(
         name="uniswap-ui",
         config=ServiceConfig(
-            image="tiljordan/uniswap-ui:v1.0.1",
+            image="tiljordan/uniswap-ui:v1.0.2",
             ports={
                 "api": PortSpec(number=3000, transport_protocol="TCP"),
             },
