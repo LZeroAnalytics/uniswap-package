@@ -1,5 +1,5 @@
-def run(plan, rpc_url):
-    uniswap_backend = plan.add_service(
+def run(plan, rpc_url, backend_url):
+    plan.add_service(
         name="uniswap-backend",
         config=ServiceConfig(
             image="tiljordan/uniswap-routing-api:v1.0.0",
@@ -22,7 +22,6 @@ def run(plan, rpc_url):
         description = "Warming up routing api"
     )
 
-    backend_port = uniswap_backend.ports["api"]
     plan.add_service(
         name="uniswap-ui",
         config=ServiceConfig(
@@ -31,7 +30,7 @@ def run(plan, rpc_url):
                 "api": PortSpec(number=3000, transport_protocol="TCP"),
             },
             env_vars = {
-                "SERVER_URL": "http://{}:{}".format(uniswap_backend.ip_address, backend_port.number)
+                "SERVER_URL": backend_url
             },
         )
     )
