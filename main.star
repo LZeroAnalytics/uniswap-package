@@ -1,13 +1,7 @@
-def run(plan, args):
-    env = args["env"]
-    ethereum = import_module("github.com/LZeroAnalytics/ethereum-package@{}/main.star".format(env))
-    clean_args = {}
-    for key in args:
-        if key != "env":
-            clean_args[key] = args[key]
+ethereum = import_module("github.com/LZeroAnalytics/ethereum-package/main.star")
 
-    output = struct()
-    output = ethereum.run(plan, clean_args)
+def run(plan, args):
+    output = ethereum.run(plan, args)
     first_participant = output.all_participants[0]
     rpc_url = "http://{}:{}".format(
         first_participant.el_context.ip_addr, 
@@ -15,8 +9,7 @@ def run(plan, args):
     )
     plan.print(rpc_url)
 
-    backend_url = "" #Hardcode this to test uniswap package independently
-    plan.print(backend_url)
+    backend_url = args["plugins"]["uniswap"]["backend_url"]
 
     # Add Uniswap services
     backend = plan.add_service(
@@ -51,14 +44,14 @@ def run(plan, args):
                 "api": PortSpec(number=3000, transport_protocol="TCP"),
             },
             env_vars = {
-                "SERVER_URL": backend_url 
+                "SERVER_URL": backend_url
             },
         )
     )
 
-    services = struct(
+    uniswap_services = struct(
         backend = backend,
         ui = ui
     )
 
-    return services
+    return uniswap_services
