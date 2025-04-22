@@ -1,6 +1,6 @@
 ethereum = import_module("github.com/LZeroAnalytics/ethereum-package/main.star")
 
-def run(plan, args):
+def run(plan, args, backend_url):
     output = ethereum.run(plan, args)
     first_participant = output.all_participants[0]
     rpc_url = "http://{}:{}".format(
@@ -8,8 +8,6 @@ def run(plan, args):
         first_participant.el_context.rpc_port_num
     )
     plan.print(rpc_url)
-
-    backend_url = args["plugins"]["uniswap"]["backend_url"]
 
     # Add Uniswap services
     backend = plan.add_service(
