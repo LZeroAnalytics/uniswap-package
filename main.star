@@ -1,5 +1,25 @@
-def run(plan, rpc_url, backend_url):
-    plan.add_service(
+def run(plan, args):
+    env = args["env"]
+    ethereum = import_module("github.com/LZeroAnalytics/ethereum-package@{}/main.star".format(env))
+    clean_args = {}
+    for key in args:
+        if key != "env":
+            clean_args[key] = args[key]
+
+    output = struct()
+    output = ethereum.run(plan, clean_args)
+    first_participant = output.all_participants[0]
+    rpc_url = "http://{}:{}".format(
+        first_participant.el_context.ip_addr, 
+        first_participant.el_context.rpc_port_num
+    )
+    plan.print(rpc_url)
+
+    backend_url = "" #Hardcode this to test uniswap package independently
+    plan.print(backend_url)
+
+    # Add Uniswap services
+    backend = plan.add_service(
         name="uniswap-backend",
         config=ServiceConfig(
             image="tiljordan/uniswap-routing-api:v1.0.0",
@@ -12,6 +32,7 @@ def run(plan, rpc_url, backend_url):
         )
     )
 
+    # Warm up the routing API
     plan.request(
         service_name = "uniswap-backend",
         recipe = GetHttpRequestRecipe(
@@ -22,7 +43,7 @@ def run(plan, rpc_url, backend_url):
         description = "Warming up routing api"
     )
 
-    plan.add_service(
+    ui = plan.add_service(
         name="uniswap-ui",
         config=ServiceConfig(
             image="tiljordan/uniswap-ui:v1.0.8",
@@ -30,7 +51,14 @@ def run(plan, rpc_url, backend_url):
                 "api": PortSpec(number=3000, transport_protocol="TCP"),
             },
             env_vars = {
-                "SERVER_URL": backend_url
+                "SERVER_URL": backend_url 
             },
         )
     )
+
+    services = struct(
+        backend = backend,
+        ui = ui
+    )
+
+    return services
