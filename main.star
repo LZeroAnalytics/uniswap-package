@@ -1,12 +1,14 @@
 ethereum = import_module("github.com/LZeroAnalytics/ethereum-package/main.star")
 
-def run(plan, args, backend_url):
-    output = ethereum.run(plan, args)
-    first_participant = output.all_participants[0]
-    rpc_url = "http://{}:{}".format(
-        first_participant.el_context.ip_addr, 
-        first_participant.el_context.rpc_port_num
-    )
+def run(plan, args, rpc_url=None, backend_url=None):
+    if rpc_url == None:
+        output = ethereum.run(plan, clean_args)
+        first_participant = output.all_participants[0]
+        rpc_url = "http://{}:{}".format(
+            first_participant.el_context.ip_addr, 
+            first_participant.el_context.rpc_port_num
+        )
+    
     plan.print(rpc_url)
 
     # Add Uniswap services
@@ -17,12 +19,19 @@ def run(plan, args, backend_url):
             ports={
                 "api": PortSpec(number=3000, transport_protocol="TCP"),
             },
+            public_ports={
+                "api": PortSpec(
+                    number=8080,
+                    transport_protocol="TCP",
+                    application_protocol="http"
+                )
+            },
             env_vars = {
                 "RPC_URL": rpc_url,
             },
         )
     )
-
+    
     # Warm up the routing API
     plan.request(
         service_name = "uniswap-backend",
@@ -34,6 +43,9 @@ def run(plan, args, backend_url):
         description = "Warming up routing api"
     )
 
+    if backend_url == None:
+        backend_url = "http://127.0.0.1:8080"
+
     ui = plan.add_service(
         name="uniswap-ui",
         config=ServiceConfig(
@@ -42,7 +54,7 @@ def run(plan, args, backend_url):
                 "api": PortSpec(number=3000, transport_protocol="TCP"),
             },
             env_vars = {
-                "SERVER_URL": backend_url
+                "SERVER_URL": backend_url 
             },
         )
     )
