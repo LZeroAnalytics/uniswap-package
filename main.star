@@ -2,6 +2,7 @@ ethereum = import_module("github.com/LZeroAnalytics/ethereum-package/main.star")
 
 def run(plan, args, rpc_url=None, backend_url=None):
     if not rpc_url:
+        plan.print("Running the ethereum package")
         output = ethereum.run(plan, args)
         first_participant = output.all_participants[0]
         rpc_url = "http://{}:{}".format(
