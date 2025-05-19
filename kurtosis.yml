@@ -1,1 +1,25 @@
 name: github.com/LZeroAnalytics/uniswap-package
+description: |
+  Uniswap
+  =======
+  This Kurtosis package instantiates a Uniswap environment with the necessary contracts and infrastructure for decentralized exchange functionality.
+
+  Prerequisites
+  -------------
+  - Access to an EVM-compatible blockchain with RPC endpoints
+  - Ethereum accounts with sufficient funds for contract deployment and testing
+
+  Configuration
+  -------------
+  To configure this package, you'll need to provide the following information:
+  - `rpc_url`: The RPC URL of the blockchain to connect to
+  - `chain_id`: The chain ID of the blockchain network
+  - `deployer_private_key`: Private key for the account deploying Uniswap contracts
+  - `factory_settings`: Configuration for the Uniswap factory contract
+    - `fee_amounts`: Array of fee tiers (e.g., [500, 3000, 10000])
+    - `tick_spacings`: Corresponding tick spacings for each fee
+  - `initial_pools`: Configuration for initial liquidity pools (optional)
+    - `token_addresses`: Addresses of tokens to create pools for
+    - `fee_tiers`: Fee tiers for the pools
+    - `initial_liquidity`: Initial liquidity amounts
+  - `network`: Network configuration (mainnet, testnet, or development)
