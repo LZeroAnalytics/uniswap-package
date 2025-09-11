@@ -1,4 +1,4 @@
-ethereum = import_module("github.com/LZeroAnalytics/ethereum-package/main.star")
+ethereum = import_module("github.com/0xBloctopus/ethereum-package/main.star")
 
 def run(plan, args, rpc_url=None, backend_url=None):
     if not rpc_url:
